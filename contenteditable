@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.js"></script>
+</head>
+
+<body>
+    <style>
+        #app div {
+            width: 400px;
+            height: 250px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
+    <div id="app">
+        <div contenteditable="true" @keydown.enter.prevent="holdKB"></div>
+    </div>
+    <script type="text/javascript">
+        new Vue({
+            el: "#app",
+            methods: {
+                holdKB(e){
+                    var selection = window.getSelection();
+                    var range = selection.getRangeAt(0);
+                    var anchorNode = selection.anchorNode;
+                    var br = document.createElement("br");
+                    console.log(selection)
+                    console.log(range)
+                    console.log()
+                    //return;
+
+                    if(anchorNode.nodeName == "DIV"){
+                        if(anchorNode.childNodes.length){
+                            var offset = selection.anchorOffset;
+                            range.insertNode(br);
+                            range.setStart(anchorNode, offset + 1);
+                            range.setEnd(anchorNode, offset + 1);
+                        }else {
+                            var _br = document.createElement("br");
+                            range.insertNode(_br);
+                            range.insertNode(br);
+                            range.setStartAfter(br);
+                            range.setEndAfter(br);
+                        }
+                    }else if (anchorNode.nodeName == "#text"){
+                        if(anchorNode.nextSibling == null && selection.anchorOffset == anchorNode.length){
+                            var _br = document.createElement("br");
+                            range.insertNode(_br);
+                        }
+                        range.insertNode(br);
+                        range.setStartAfter(br);
+                        range.setEndAfter(br);
+                    }
+                    //document.execCommand("insertHTML","false","<br><br>"); 
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
